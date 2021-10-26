@@ -7,10 +7,12 @@ import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import { useRoute } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import KebabMenu from '../components/KebabMenu/KebabMenu';
+import AdminHome from './AdminHome';
+import AdminGestion from './AdminGestion';
 
 const Tab = createMaterialTopTabNavigator();
 
-const MainTab = (props) => {
+const AdminTab = (props) => {
 	const route = useRoute();
 	const [isHome, setIsHome] = useState(true);
 
@@ -20,7 +22,7 @@ const MainTab = (props) => {
 	});
 
 	useEffect(() => {
-		let isCurrentlyHome = route?.state?.history[1]?.key.includes('home') ?? true
+		let isCurrentlyHome = route?.state?.history[1]?.key.includes('adminHome') ?? true
 		setIsHome(isCurrentlyHome)
 	}, [route])
 
@@ -53,8 +55,8 @@ const MainTab = (props) => {
 				},
 				style: { width: '100%', elevation: 0, display: 'flex', justifyContent: 'space-around', backgroundColor: '#003876' },
 			}}>
-				<Tab.Screen name="home" options={{ tabBarIcon: () => <Icon color={isHome ? "#003876" : '#fff'} name="home" size={25} />, title: '' }} component={Home} />
-				<Tab.Screen name="favorite" options={{ tabBarLabel: 'Favoritos' }} component={Favorite} />
+				<Tab.Screen name="adminHome" options={{ tabBarIcon: () => <Icon color={isHome ? "#003876" : '#fff'} name="home" size={25} />, title: '' }} component={AdminHome} />
+				<Tab.Screen name="gestion" options={{ tabBarLabel: 'Gestion' }} component={AdminGestion} />
 			</Tab.Navigator > 
 			<View style={{ height: 300, backgroundColor: 'red', position: 'absolute', top: 0, right: 0 }}></View>
 		</>
@@ -100,4 +102,4 @@ const styles = StyleSheet.create({
 	}
 })
 
-export default MainTab
+export default AdminTab

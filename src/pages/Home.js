@@ -1,16 +1,14 @@
 import React from "react";
-import { View, Text, TextInput, StyleSheet, ScrollView } from "react-native";
+import { View, TextInput, StyleSheet, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
+import {Text} from 'native-base'
 import Icon from "react-native-vector-icons/Feather";
 
 import ListItem from "../components/ListItem/ListItem";
-import { routes } from "../utils/routes";
-import { HTTPStationClient } from "../utils/httpclient";
-import { AlertModal } from "../components/Modal/AlertModal";
 
 //HOOKS
 import useGetStations from "../hooks/useGetStations";
-import { Box, Center, Heading, HStack, Spinner, VStack } from "native-base";
+import { Box, Center, Heading, Spinner, VStack } from "native-base";
 import { colors } from "../utils/colors";
 
 const Home = ({ navigation }) => {
@@ -18,7 +16,6 @@ const Home = ({ navigation }) => {
 
   const { allStations } = useSelector((state) => state.stations);
 
-  console.log(allStations);
   return (
     <View>
       {!isLoading ? (
@@ -64,31 +61,48 @@ const Home = ({ navigation }) => {
             }}
           ></View>
           <View horizontal={false} style={styles.content}>
-            {allStations &&
+            {allStations.length ? (
+                <Text
+                style={{
+                  fontSize: 12,
+                  paddingLeft: 5,
+                  marginTop: 8,
+                  color: "#003876",
+                  fontFamily: "Montserrat",
+                }}
+              >
+                Todas las emisoras
+              </Text>
+            ): null}
+            {allStations.length ?
               allStations.map((station, index) => (
                 <ListItem station={station} key={index} />
-              ))}
+              )) : (
+                <Text color={colors.primary} textAlign="center" fontSize="lg" fontFamily="Montserrat">
+                  No hay emisoras disponibles
+                </Text>
+              )}
           </View>
         </ScrollView>
       ) : (
-				<VStack h="100%">
+        <VStack h="100%">
 
-        <Center flex={1} >
-          <Box
-            flex={1}
-						display="flex"
-            flexDir={"column"}
-            justifyContent="center"
-            space={2}
-            alignItems="center"
-          >
-            <Spinner size={"lg"} accessibilityLabel="Loading posts" color={colors.primary}/>
-            <Heading color={colors.primary} fontSize="sm">
-              Cargando mas emisoras
-            </Heading>
-          </Box>
-        </Center>
-				</VStack>
+          <Center flex={1} >
+            <Box
+              flex={1}
+              display="flex"
+              flexDir={"column"}
+              justifyContent="center"
+              space={2}
+              alignItems="center"
+            >
+              <Spinner size={"lg"} accessibilityLabel="Loading posts" color={colors.primary} />
+              <Heading color={colors.primary} fontSize="sm">
+                Cargando mas emisoras
+              </Heading>
+            </Box>
+          </Center>
+        </VStack>
       )}
     </View>
   );
@@ -109,14 +123,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 7,
     backgroundColor: "#E5E7E7",
-    height: 40,
+    height: 45,
     paddingLeft: 13,
     width: "88%",
     marginLeft: 30,
     fontFamily: "Montserrat",
   },
   iconBox: {
-    height: 40,
+    height: 45,
     width: 40,
     backgroundColor: "#003877",
     position: "absolute",

@@ -14,6 +14,7 @@ import { setStations } from '../store/features/stations';
 const useGetStations = () => {
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false);
+  const [station, setStation] = useState([]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -23,14 +24,18 @@ const useGetStations = () => {
       )
       .subscribe({
         next: (x) => {
-          console.log(x)
+          let unserialzedStations = atob(x);
+          let parsedStations = JSON.parse(unserialzedStations)
+          setStation(parsedStations)
         },
         error: (error) => {
           console.log(error)
+          setIsLoading(false);
+          dispatch(setStations([]))
         },
         complete: () => {
+          dispatch(setStations(station))
           setIsLoading(false);
-          console.log('completed')
         }
       })
       dispatch(setStations([{}, {}]))

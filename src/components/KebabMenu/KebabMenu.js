@@ -1,15 +1,45 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { marginRight } from 'styled-system'
+import {
+	Menu,
+	MenuOptions,
+	MenuOption,
+	MenuTrigger,
+} from 'react-native-popup-menu';
+import { colors } from '../../utils/colors';
+import { routes } from '../../utils/routes';
 
-const KebabMenu = () => {
+const KebabMenu = ({ navigation }) => {
+
+	const handleNavigate = (to) => navigation.navigate(to)
+
 	return (
-		<TouchableOpacity style={styles.menu}>
-			<View style={styles.dot}></View>
-			<View style={styles.dot}></View>
-			<View style={styles.dot}></View>
-		</TouchableOpacity>
+		<Menu>
+			<MenuTrigger>
+				<TouchableOpacity style={styles.menu}>
+					<View style={styles.dot}></View>
+					<View style={styles.dot}></View>
+					<View style={styles.dot}></View>
+				</TouchableOpacity>
+			</MenuTrigger>
+			<MenuOptions>
+
+				<MenuOption onSelect={() =>handleNavigate(routes.term)} >
+					<Text style={{ color: colors.primary, margin:10 }}>Terminos de uso</Text>
+				</MenuOption>
+
+				<MenuOption onSelect={() =>handleNavigate(routes.policy)} >
+					<Text style={{ color: colors.primary, margin:10 }}>Politica de privacidad</Text>
+				</MenuOption>
+
+				<MenuOption onSelect={() =>handleNavigate(routes.about)} >
+					<Text style={{ color: colors.primary, margin:10 }}>Acerca de la aplicacion</Text>
+				</MenuOption>
+
+			</MenuOptions>
+		</Menu>
+
 	)
 }
 
