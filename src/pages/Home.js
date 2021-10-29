@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, TextInput, StyleSheet, ScrollView } from "react-native";
-import { useSelector } from "react-redux";
-import {Text} from 'native-base'
+import { useDispatch, useSelector } from "react-redux";
+import { Text } from "native-base";
 import Icon from "react-native-vector-icons/Feather";
 
 import ListItem from "../components/ListItem/ListItem";
@@ -10,11 +10,25 @@ import ListItem from "../components/ListItem/ListItem";
 import useGetStations from "../hooks/useGetStations";
 import { Box, Center, Heading, Spinner, VStack } from "native-base";
 import { colors } from "../utils/colors";
+import { setStations } from "../store/features/stations";
+import { setProvinces } from "../store/features/provinces";
+import useGetProvinces from "../hooks/useGetProivinces";
 
 const Home = ({ navigation }) => {
-  const { isLoading } = useGetStations();
+  const dispatch = useDispatch();
 
-  const { allStations } = useSelector((state) => state.stations);
+  const { isLoading, stations } = useGetStations();
+  const { provinces } = useGetProvinces();
+
+  const { activeStations } = useSelector((state) => state.stations);
+
+  useEffect(() => {
+    dispatch(setStations(stations));
+  }, [isLoading]);
+
+  useEffect(() => {
+    dispatch(setProvinces(provinces));
+  }, [provinces]);
 
   return (
     <View>
@@ -60,9 +74,9 @@ const Home = ({ navigation }) => {
               marginVertical: 20,
             }}
           ></View>
-          <View horizontal={false} style={styles.content}>
-            {allStations.length ? (
-                <Text
+          <View style={styles.content}>
+            {activeStations.length ? (
+              <Text
                 style={{
                   fontSize: 12,
                   paddingLeft: 5,
@@ -73,21 +87,30 @@ const Home = ({ navigation }) => {
               >
                 Todas las emisoras
               </Text>
-            ): null}
-            {allStations.length ?
-              allStations.map((station, index) => (
-                <ListItem station={station} key={index} />
-              )) : (
-                <Text color={colors.primary} textAlign="center" fontSize="lg" fontFamily="Montserrat">
-                  No hay emisoras disponibles
-                </Text>
-              )}
+            ) : null}
+            {activeStations.length ? (
+              activeStations.map((station, index) => (
+                <ListItem
+                  navigation={navigation}
+                  station={station}
+                  key={index}
+                />
+              ))
+            ) : (
+              <Text
+                color={colors.primary}
+                textAlign="center"
+                fontSize="lg"
+                fontFamily="Montserrat"
+              >
+                No hay emisoras disponibles
+              </Text>
+            )}
           </View>
         </ScrollView>
       ) : (
         <VStack h="100%">
-
-          <Center flex={1} >
+          <Center flex={1}>
             <Box
               flex={1}
               display="flex"
@@ -96,7 +119,11 @@ const Home = ({ navigation }) => {
               space={2}
               alignItems="center"
             >
-              <Spinner size={"lg"} accessibilityLabel="Loading posts" color={colors.primary} />
+              <Spinner
+                size={"lg"}
+                accessibilityLabel="Loading posts"
+                color={colors.primary}
+              />
               <Heading color={colors.primary} fontSize="sm">
                 Cargando mas emisoras
               </Heading>
@@ -145,6 +172,7 @@ const styles = StyleSheet.create({
   },
   content: {
     width: "100%",
+    marginBottom: 20,
   },
 });
 export default Home;

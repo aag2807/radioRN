@@ -1,48 +1,47 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { from } from 'rxjs'
-import { pluck } from 'rxjs/operators'
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { from } from "rxjs";
+import { pluck, tap, map } from "rxjs/operators";
 
 //UTILS
-import { HTTPStationClient } from '../utils/httpclient'
-import { URL } from '../utils/URL'
+import { HTTPStationClient } from "../utils/httpclient";
+import { URL } from "../utils/URL";
 
 // REDUX
-import { setStations } from '../store/features/stations';
-
+import { setStations } from "../store/features/stations";
+import axios from "axios";
 
 const useGetStations = () => {
-  const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false);
   const [station, setStation] = useState([]);
 
   useEffect(() => {
     setIsLoading(true);
-    from(HTTPStationClient(URL.GET_STATIONS))
-      .pipe(
-        pluck('data')
-      )
-      .subscribe({
-        next: (x) => {
-          let unserialzedStations = atob(x);
-          let parsedStations = JSON.parse(unserialzedStations)
-          setStation(parsedStations)
-        },
-        error: (error) => {
-          console.log(error)
-          setIsLoading(false);
-          dispatch(setStations([]))
-        },
-        complete: () => {
-          dispatch(setStations(station))
-          setIsLoading(false);
-        }
-      })
-      dispatch(setStations([{}, {}]))
+    let obs = from(axios.get(URL.GET_STATIONS))
+      .pipe(pluck("data"), map(atob), map(JSON.parse))
 
-  }, [])
+    obs.subscribe({
+      next: (stations) => {
+        setStation(stations);
+      },
+      error: (error) => {
+        console.error(error);
+        setStation([]);
+        setIsLoading(false);
+      },
+      complete: () => {
+        setIsLoading(false);
+      },
+    });
 
-  return { isLoading: isLoading }
-}
+ 
+    return () => {
+      obs.unsubscribe()
+    }
 
-export default useGetStations
+  }, []);
+
+  return { isLoading: isLoading, stations: station };
+};
+
+export default useGetStations;

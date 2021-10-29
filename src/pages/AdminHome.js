@@ -1,11 +1,10 @@
 import React from "react";
-import { View, Text, TextInput, StyleSheet, ScrollView } from "react-native";
+import { View, TextInput, StyleSheet, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/Feather";
-import { Box, Center, Heading, Spinner, VStack } from "native-base";
+import { Box, Center, Heading, Spinner, VStack, Text } from "native-base";
 
 //HOOKS
-import useGetStations from "../hooks/useGetStations";
 
 //UTILS
 import { colors } from "../utils/colors";
@@ -14,33 +13,39 @@ import { colors } from "../utils/colors";
 import AdminListItem from "../components/AdminListItem/AdminListItem";
 
 const AdminHome = ({ navigation }) => {
-
-  const { isLoading } = useGetStations();
-
   const { allStations } = useSelector((state) => state.stations);
 
   return (
     <View>
-        <ScrollView
-          style={styles.container}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        >
-          <View style={styles.searchbarContainer}>
-            <View style={styles.iconBox}>
-              <Icon name="search" style={{ fontSize: 18 }} color={"#fff"} />
-            </View>
-            <TextInput placeholder="Buscar" style={styles.searchbar} />
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+      >
+        <View style={styles.searchbarContainer}>
+          <View style={styles.iconBox}>
+            <Icon name="search" style={{ fontSize: 18 }} color={"#fff"} />
           </View>
-         
-          <View horizontal={false} style={styles.content}>
-            {allStations &&
-              allStations.map((station, index) => (
-                <AdminListItem station={station} key={index} />
-              ))}
-          </View>
-        </ScrollView>
-      
+          <TextInput placeholder="Buscar" style={styles.searchbar} />
+        </View>
+
+        <View horizontal={false} style={styles.content}>
+          {allStations ? (
+            allStations.map((station, index) => (
+              <AdminListItem station={station} key={index} />
+            ))
+          ) : (
+            <Text
+              color={colors.primary}
+              textAlign="center"
+              fontSize="lg"
+              fontFamily="Montserrat"
+            >
+              No hay emisoras en el sistema.
+            </Text>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 };

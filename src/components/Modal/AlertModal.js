@@ -1,22 +1,18 @@
-import React from 'react'
-import { View, StyleSheet, Modal, Text } from 'react-native'
+import React from "react";
+import { View, StyleSheet, Modal, Text } from "react-native";
 
 const AlertModal = ({ title, children, showmodal = true }) => {
-    return (
+  return (
+    <View>
+      <Modal transparent={true} visible={showmodal} animationType="fade">
         <View>
-            <Modal
-                transparent={true}
-                visible={showmodal}
-                animationType="fade"
-            >
-                <View>
-                    <Text>{title}</Text>
+          <Text>{title}</Text>
 
-                    <Text>{children}</Text>
-                </View>
-            </Modal>
+          <Text>{children}</Text>
         </View>
-    )
-}
+      </Modal>
+    </View>
+  );
+};
 
-export default AlertModal
+export default AlertModal;
